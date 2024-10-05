@@ -8,12 +8,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import com.server.pricechecker.Product;
-import com.server.pricechecker.DBConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-//@WebServlet(name= "Initial Servlet", urlPatterns = "/price-checker")
+import com.google.gson.Gson;
+
+//@WebServlet(name= "InitialServlet", urlPatterns = "/price-checker")
 public class PriceCheckerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(PriceCheckerServlet.class.getName());
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -34,13 +37,21 @@ public class PriceCheckerServlet extends HttpServlet {
                 products.add(product);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Database error", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+            return;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unexpected error");
+            return;
         }
 
-        String json = new Json().toJson(products);
-        response.getWriter().write(json);
+        try {
+            String json = new Gson().toJson(products);
+            response.getWriter().write(json);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error writing response", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error writing response");
+        }
     }
 }
-
-
-

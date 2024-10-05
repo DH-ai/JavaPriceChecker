@@ -4,5 +4,4 @@ CREATE TABLE products (
                           price DECIMAL(10, 2) NOT NULL,
                           platform VARCHAR(100),
                           link VARCHAR(255),
-                          last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+                          last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
